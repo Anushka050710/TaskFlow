@@ -51,7 +51,7 @@ export default function App() {
 
       {/* Filters */}
       <div style={{ marginBottom: 20 }}>
-        <Filters filters={filters} onChange={setFilters} />
+        <Filters filters={filters} tags={tags} onChange={setFilters} />
       </div>
 
       {/* Task list */}

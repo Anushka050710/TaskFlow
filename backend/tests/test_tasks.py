@@ -114,3 +114,46 @@ def test_pagination(client):
     assert len(body["items"]) == 2
     assert body["total"] == 5
     assert body["pages"] == 3
+
+
+def test_filter_by_tag_id(client):
+    tag = client.post("/api/tags/", json={"name": "frontend", "color": "#3b82f6"}).get_json()
+    client.post("/api/tasks/", json={"title": "Tagged task", "tag_ids": [tag["id"]]})
+    client.post("/api/tasks/", json={"title": "Untagged task"})
+    r = client.get(f"/api/tasks/?tag_id={tag['id']}")
+    items = r.get_json()["items"]
+    assert len(items) == 1
+    assert items[0]["title"] == "Tagged task"
+
+
+def test_update_task_with_tags(client):
+    tag = client.post("/api/tags/", json={"name": "v2", "color": "#22c55e"}).get_json()
+    task = client.post("/api/tasks/", json={"title": "No tags yet"}).get_json()
+    r = client.patch(f"/api/tasks/{task['id']}", json={"tag_ids": [tag["id"]]})
+    assert r.status_code == 200
+    assert len(r.get_json()["tags"]) == 1
+    assert r.get_json()["tags"][0]["id"] == tag["id"]
+
+
+def test_update_task_clear_tags(client):
+    tag = client.post("/api/tags/", json={"name": "clearme", "color": "#ef4444"}).get_json()
+    task = client.post("/api/tasks/", json={"title": "Has tag", "tag_ids": [tag["id"]]}).get_json()
+    r = client.patch(f"/api/tasks/{task['id']}", json={"tag_ids": []})
+    assert r.status_code == 200
+    assert r.get_json()["tags"] == []
+
+
+def test_create_task_invalid_priority(client):
+    r = client.post("/api/tasks/", json={"title": "Bad priority", "priority": "extreme"})
+    assert r.status_code == 422
+    assert "priority" in r.get_json()["errors"]
+
+
+def test_update_task_not_found(client):
+    r = client.patch("/api/tasks/9999", json={"title": "Ghost"})
+    assert r.status_code == 404
+
+
+def test_delete_task_not_found(client):
+    r = client.delete("/api/tasks/9999")
+    assert r.status_code == 404

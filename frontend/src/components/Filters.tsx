@@ -1,13 +1,14 @@
 import React from "react";
-import type { TaskFilters } from "../types";
+import type { Tag, TaskFilters } from "../types";
 
 interface Props {
   filters: TaskFilters;
+  tags: Tag[];
   onChange: (f: TaskFilters) => void;
 }
 
-export function Filters({ filters, onChange }: Props) {
-  const set = (key: keyof TaskFilters, value: string) =>
+export function Filters({ filters, tags, onChange }: Props) {
+  const set = (key: keyof TaskFilters, value: string | number) =>
     onChange({ ...filters, [key]: value, page: 1 });
 
   return (
@@ -42,6 +43,21 @@ export function Filters({ filters, onChange }: Props) {
         <option value="high">High</option>
         <option value="critical">Critical</option>
       </select>
+      {tags.length > 0 && (
+        <select
+          value={filters.tag_id ?? ""}
+          onChange={(e) => set("tag_id", e.target.value ? Number(e.target.value) : "")}
+          style={{ width: "auto" }}
+          aria-label="Filter by tag"
+        >
+          <option value="">All tags</option>
+          {tags.map((tag) => (
+            <option key={tag.id} value={tag.id}>
+              {tag.name}
+            </option>
+          ))}
+        </select>
+      )}
     </div>
   );
 }

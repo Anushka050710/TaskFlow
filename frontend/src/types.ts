@@ -31,6 +31,7 @@ export interface PaginatedTasks {
 export interface TaskFilters {
   status?: TaskStatus | "";
   priority?: Priority | "";
+  tag_id?: number | "";
   search?: string;
   page?: number;
 }

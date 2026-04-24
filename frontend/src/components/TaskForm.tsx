@@ -172,6 +172,12 @@ export function TaskForm({ initial, tags, onSubmit, onCancel }: Props) {
         <span style={{ fontSize: 13 }}>🤖 Use AI to suggest priority</span>
       </label>
 
+      {initial?.ai_priority_reason && !form.use_ai_priority && (
+        <p style={{ fontSize: 12, color: "#6366f1", fontStyle: "italic", margin: 0 }}>
+          🤖 Previous AI suggestion: {initial.ai_priority_reason}
+        </p>
+      )}
+
       <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
         <button type="button" onClick={onCancel} style={{ background: "#f1f5f9", color: "#475569" }}>
           Cancel

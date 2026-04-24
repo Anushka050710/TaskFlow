@@ -2,6 +2,7 @@ import logging
 import sys
 from flask import Flask
 from flask_cors import CORS
+from flask_migrate import Migrate
 from .database import db
 from .config import Config
 
@@ -20,8 +21,9 @@ def create_app(config: type = Config) -> Flask:
     app.logger.handlers = [handler]
     app.logger.setLevel(logging.INFO)
 
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, resources={r"/api/*": {"origins": app.config["CORS_ORIGINS"]}})
     db.init_app(app)
+    Migrate(app, db)
 
     from .routes.tasks import tasks_bp
     from .routes.tags import tags_bp

@@ -72,7 +72,10 @@ def _openai_priority(
     due_date: Optional[datetime],
     api_key: str,
 ) -> tuple[str, str]:
-    import openai  # lazy import — optional dependency
+    try:
+        import openai  # lazy import — optional dependency
+    except ImportError as exc:
+        raise ImportError("openai package is not installed; falling back to heuristics") from exc
 
     client = openai.OpenAI(api_key=api_key)
 

@@ -1,6 +1,7 @@
 import type { PaginatedTasks, Tag, Task, TaskFilters, TaskFormData } from "./types";
 
-const BASE = "/api";
+// In production set REACT_APP_API_BASE to your backend URL e.g. https://taskflow-api.onrender.com/api
+const BASE = process.env.REACT_APP_API_BASE ?? "/api";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
